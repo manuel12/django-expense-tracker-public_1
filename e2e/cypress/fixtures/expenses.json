@@ -1,0 +1,41 @@
+[
+    {
+      "amount": 20.00,
+      "content": "meat, eggs, bacons, tomatoes, fish, spinach",
+      "category": "Groceries",
+      "source": "LIDL"
+    },
+    {
+      "amount": 13.00,
+      "content": "headphones",
+      "category": "Electronics",
+      "source": "MediaMarkt"
+    },
+    {
+      "amount": 18.00,
+      "content": "avocado, salmon, blueberries",
+      "category": "Groceries",
+      "source": "Carrefour"
+    },
+
+    {
+      "amount": 8.00,
+      "content": "Uber fare",
+      "category": "Taxi fare",
+      "source": "Uber"
+    },
+    {
+      "amount": 25.00,
+      "content": "Gym memebership",
+      "category": "Miscellaneous",
+      "source": "McFit Gym"
+    },
+    {
+      "amount": 16.00,
+      "content": "Bar tab",
+      "category": "Bar tabs",
+      "source": "Beach bar"
+    }
+]
+
+
