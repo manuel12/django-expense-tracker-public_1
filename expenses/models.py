@@ -14,36 +14,36 @@ from expenses import utils
 
 class ExpenseManager(models.Manager):
     def add_testuser_expenses(self, request):
+        if str(request.user) == 'testuser3':
+            test_user_expenses = Expense.objects.filter(owner=request.user).order_by('-date')
 
-      if str(request.user) == 'testuser3':
-        test_user_expenses = Expense.objects.filter(owner=request.user).order_by('-date')
-
-        if not test_user_expenses:
-          Expense.objects.create_test_expenses({
-            'today': 2,
-            'one_week_ago': 2,
-            'two_weeks_ago': 2,
-            'three_weeks_ago': 1,
-            'one_month_ago': 1,
-            'two_month_ago': 4,
-            'three_month_ago': 5
-          }, request.user)
+            if not test_user_expenses:
+                Expense.objects.create_test_expenses(request.user)
 
 
     def delete_testuser_expenses(self, request):
-          if str(request.user) == 'testuser1' or \
-             str(request.user) == 'testuser3':
+        if str(request.user) == 'testuser1' or \
+            str(request.user) == 'testuser3':
 
             test_user_expenses = Expense.objects.filter(owner=request.user)
             for expense in test_user_expenses:
-              expense.delete()
+                expense.delete()
 
-    def create_test_expenses(self, expenses_config, owner):
-      eg = utils.ExpenseGenerator(Expense, expenses_config, owner)
-      fixed_expenses = eg.generate_expenses()
+    def create_test_expenses(self, owner):
+        expenses_by_date = utils.read_from_json('expenses/expensesByDate.json')
+        eg = utils.ExpenseGenerator(expenses_by_date)
+        expenses = eg.generate_expenses()
 
-      for expense in fixed_expenses:
-        expense.save()
+        for expense in expenses:
+            exp = self.model(
+              amount=expense['amount'],
+              content=expense['content'],
+              category=expense['category'],
+              source=expense['source'],
+              date=expense['date'],
+              owner=owner
+            )
+            exp.save()
 
     def _get_user_expenses(self, owner):
         return Expense.objects.filter(owner=owner)
