@@ -6,18 +6,8 @@ describe("Statistics Tests", () => {
     cy.startUp()
 
     cy.fixture('expenses').then(function(expensesData) {
-      const _expensesData = expensesData
-      const em = new ExpenseGenerator(_expensesData, {
-        'today': 2,
-        'one_week_ago': 1,
-        'two_weeks_ago': 1,
-        'three_weeks_ago': 1,
-        'one_month_ago': 2,
-        'two_month_ago': 1,
-        'three_month_ago': 1
-      })
-      
-      const expenses = em.generateExpenses()
+      const eg = new ExpenseGenerator(expensesData) 
+      const expenses = eg.generateExpenses()
       cy.wrap(expenses).as('expenses')
 
       for(let expense of expenses) {
@@ -40,17 +30,8 @@ describe("Statistics Tests", () => {
 
   beforeEach(function() {
     cy.fixture('expenses').then(function(expensesData) {
-      const _expensesData = expensesData
-      const em = new ExpenseGenerator(_expensesData, {
-        'today': 2,
-        'one_week_ago': 1,
-        'two_weeks_ago': 1,
-        'three_weeks_ago': 1,
-        'one_month_ago': 2,
-        'two_month_ago': 1,
-        'three_month_ago': 1
-      })
-      const expenses = em.generateExpenses()
+      const eg = new ExpenseGenerator(expensesData)
+      const expenses = eg.generateExpenses()
       cy.wrap(expenses).as('expenses')
     })
 
@@ -89,12 +70,10 @@ describe("Statistics Tests", () => {
       }
     }
     
-    currentMonthExpenses.toFixed(2)
-    
     cy.visit(Cypress.config().chartsUrl)
     cy.get('[data-test=stats-current-month-expenses]')
       .should('be.visible')
-      .and('contain', `€ ${currentMonthExpenses}`)
+      .and('contain', `€ ${currentMonthExpenses.toFixed(2)}`)
   })
 
   it('should show correct last month total expenses', function() {
@@ -116,13 +95,11 @@ describe("Statistics Tests", () => {
         lastMonthExpenses += amount
       }
     }
-    
-    lastMonthExpenses.toFixed(2)
 
     cy.visit(Cypress.config().chartsUrl)
     cy.get('[data-test=stats-last-month-expenses]')
       .should('be.visible')
-      .and('contain', `€ ${lastMonthExpenses}`) 
+      .and('contain', `€ ${lastMonthExpenses.toFixed(2)}`) 
   
   })
   
@@ -200,7 +177,7 @@ describe("Statistics Tests", () => {
     const numExpenseMonths = expenseAmountsByMonth.length
     const totalExpenses = expenseAmountsByMonth.reduce((a, b) => a + b)
 
-    const averageExpensesByMonth = (totalExpenses / numExpenseMonths).toFixed(1)
+    const averageExpensesByMonth = (totalExpenses / numExpenseMonths).toFixed(2)
     /* 
         .toFixed(1) is added in order to get the single 
         decimal amount: 77.6 as averageExpensesByMonth number.
@@ -282,7 +259,7 @@ describe("Statistics Tests", () => {
 
     cy.visit(Cypress.config().chartsUrl)
     cy.get('[data-test=stats-total-expenses]').should('be.visible')
-      .and('contain', `€ ${totalExpenses}`)
+      .and('contain', `€ ${totalExpenses.toFixed(2)}`)
   })
 
 })
