@@ -140,23 +140,8 @@ class DateGenerator:
 
 
 class ExpenseGenerator:
-    def __init__(self, model, expense_config, owner):
-        self.model = model
-        self.expense_obj = expense_config
-        self.owner = owner
-        self.expenses_by_date = read_from_json('expenses/expensesByDate.json')
-        #self.expenses_by_date_length = len(self.expenses_by_date)
-
-    def modify_expense_date(self, expense_index, date_section, expense_data, days_to_add):
-        if(expense_index != 0 and
-          (date_section == "today" or
-          date_section == "one_month_ago" or
-          date_section == "two_month_ago" or
-          date_section == "three_month_ago")):
-
-          days_to_add += 1
-          current_date = expense_data['date']
-          expense_data['date'] = DateGenerator.modify_date_with_timedelta(current_date, days_to_add)
+    def __init__(self, expenses_by_date):
+        self.expenses_by_date = expenses_by_date
 
     def generate_expenses(self):
         expenses = []
@@ -166,19 +151,12 @@ class ExpenseGenerator:
           date_section_expenses = self.expenses_by_date[date_section]
 
           for expense_data in date_section_expenses:
-            expense_index = date_section_expenses.index(expense_data)
+            current_expense_index = date_section_expenses.index(expense_data)
             self.add_date_to_expense(date_section, expense_data)
-            self.modify_expense_date(expense_index, date_section, expense_data, days_to_add)
+            self.modify_expense_date(current_expense_index, date_section, expense_data, days_to_add)
 
-            expense = self.model(
-              amount=expense_data['amount'],
-              content=expense_data['content'],
-              category=expense_data['category'],
-              source=expense_data['source'],
-              date=expense_data['date'],
-              owner=self.owner
-            )
-            expenses.append(expense)
+            days_to_add += 1
+            expenses.append(expense_data)
         return expenses
 
     def add_date_to_expense(self, date, expense):
@@ -198,4 +176,18 @@ class ExpenseGenerator:
           expense['date'] = DateGenerator.get_date_three_months_ago()
         else:
           print(f'Unrecognized date given: ', {date})
+
+    def modify_expense_date(self, expense_index, date_section, expense_data, days_to_add):
+        # Don't modifydate of the 1st expense of
+        # date_section_expenses list.
+        if(expense_index != 0 and
+          (date_section == "today" or
+          date_section == "one_month_ago" or
+          date_section == "two_month_ago" or
+          date_section == "three_month_ago")):
+
+          days_to_add += 1
+          current_date = expense_data['date']
+          expense_data['date'] = DateGenerator.modify_date_with_timedelta(current_date, days_to_add)
+
 
