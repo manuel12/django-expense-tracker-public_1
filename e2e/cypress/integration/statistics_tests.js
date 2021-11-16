@@ -178,12 +178,6 @@ describe("Statistics Tests", () => {
     const totalExpenses = expenseAmountsByMonth.reduce((a, b) => a + b)
 
     const averageExpensesByMonth = (totalExpenses / numExpenseMonths).toFixed(2)
-    /* 
-        .toFixed(1) is added in order to get the single 
-        decimal amount: 77.6 as averageExpensesByMonth number.
-        The original figure is 77.625, when transformed by .toFixed(2)
-        the averageExpensesByMonth becomes 77.63, causing an error.
-    */
 
     cy.visit(Cypress.config().chartsUrl)
     cy.get('[data-test=stats-monthly-expense-average]').should('be.visible')
@@ -206,6 +200,7 @@ describe("Statistics Tests", () => {
     const expenseAmountsByDay = Object.values(expensesByDay)
     const totalExpenses = expenseAmountsByDay.reduce((a, b) => a + b)
     const numExpenseDays = expenseAmountsByDay.length
+
     const averageExpensesByDay = (totalExpenses / numExpenseDays).toFixed(2)
 
     cy.visit(Cypress.config().chartsUrl)
